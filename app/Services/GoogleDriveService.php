@@ -17,6 +17,16 @@ class GoogleDriveService
 
     public function __construct()
     {
+        if (getenv('GOOGLE_APPLICATION_CREDENTIALS_JSON')) {
+            Log::info('GOOGLE_APPLICATION_CREDENTIALS_JSON exists');
+            $jsonFilePath = sys_get_temp_dir() . '/google-service-account.json';
+            file_put_contents(
+                $jsonFilePath,
+                base64_decode(getenv('GOOGLE_APPLICATION_CREDENTIALS_JSON'))
+            );
+            putenv("GOOGLE_APPLICATION_CREDENTIALS=$jsonFilePath");
+        }
+
         $this->client = new Google_Client();
         $this->client->useApplicationDefaultCredentials();
         $this->client->addScope(Google_Service_Drive::DRIVE);
